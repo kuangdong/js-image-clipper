@@ -1,0 +1,30 @@
+{
+  "name": "js-image-clipper",
+  "version": "1.0.0",
+  "description": "A JavaScript image clipping plug-in",
+  "main": "dist/jsImageClipper.js",
+  "module": "src/imageClipper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "imageClip",
+    "front-end"
+  ],
+  "files": [
+    "dist/",
+    "src/"
+  ],
+  "author": "kuangdong",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^3.5.3",
+    "mini-css-extract-plugin": "^0.11.1",
+    "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "style-loader": "^1.2.1",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}

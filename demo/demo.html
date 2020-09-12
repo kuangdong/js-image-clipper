@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>demo</title>
+<script src="../dist/jsImageClipper.js"></script>
+<link rel="stylesheet" href="../dist/jsImageClipper.css" type="text/css" />
+<style>
+.container{
+	width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+}
+.avatarContainer{
+	width: 200px;
+    height: 200px;
+    overflow: hidden;
+	border: 1px solid #eee;
+}
+.avatar{
+	visibility:hidden;
+}
+#file{
+	display:none;
+}
+.selectBtn{
+	margin-top: 50px;
+    margin-left: 50px;
+}
+.mask {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+}
+.custormDialogBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+}
+.dialogBoxHeader {
+    height: 40px;
+    line-height: 40px;
+    font-size: 18px;
+    color: #666;
+    border-bottom: 1px solid #eee;
+    padding: 0 10px;
+}
+.dialogBoxClose {
+    position: absolute;
+    right: 15px;
+    font-size: 24px;
+    top: 0px;
+    cursor: pointer;
+    font-size: 30px;
+    transform: rotateZ(-47deg);
+}
+.clipperContainer{
+	width:400px;
+	height:400px;
+}
+.clipperControlBtnContainer {
+    text-align: center;
+    padding: 5px 0;
+}
+.dialogBoxFooter {
+    height: 40px;
+    text-align: right;
+    line-height: 50px;
+    border-top: 1px solid #eee;
+}
+.imageClipperBtn {
+    border: none;
+    background-color: #6192f5;
+    color: #fff;
+    width: 32px;
+    height: 30px;
+    font-size: 24px;
+    margin: 0 1px;
+}
+.dialogBoxFooter .btn.confirm {
+    margin-right: 10px;
+}
+.btn {
+    padding: 3px 18px;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #999;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+</style>
+</head>
+
+<body>
+	<div class="container">
+    	<div class="avatarContainer"><img src="" class="avatar" /></div>
+        <button class="selectBtn">SelectPicture</button>
+    </div>
+    <input type="file" accept="image/*" id="file"/>
+</body>
+<script>
+	document.querySelector(".selectBtn").addEventListener("click",btnClickHandler);
+	function btnClickHandler(e){
+		var input=document.querySelector("#file");
+		var evt=document.createEvent("MouseEvents");
+		evt.initEvent("click",true,true);
+		input.dispatchEvent(evt);
+		input.addEventListener("change",changeHandler);
+	}
+	function changeHandler(e){
+		var file=e.target.files[0];
+    	var url=window.URL.createObjectURL(file);
+		openImageClipper(url);
+	}
+	function openImageClipper(url){
+		createDialog(function(msg){
+			if(msg=="confirm"){
+				/*var imgData=ImageClipper.getImgDataURL();
+				document.querySelector(".avatar").setAttribute("src",imgData);
+				document.querySelector(".avatar").style.visibility="visible";*/
+				JsImageClipper.getImgBlob(function(blob){
+					document.querySelector(".avatar").setAttribute("src",window.URL.createObjectURL(blob));
+					document.querySelector(".avatar").style.visibility="visible";
+				},'image/png',1);
+				JsImageClipper.destory();
+			}
+		});
+		JsImageClipper.init(".clipperContainer",url);
+	}
+	function createDialog(callback){
+		var mask=document.createElement("div");
+        mask.className="mask";
+        var box=document.createElement("div");
+        box.className="custormDialogBox";
+        var boxHtml='<div class="dialogBoxHeader">positon the image<span class="dialogBoxClose">+</span></div><div class="dialogBoxBody">'+
+		'<div class="clipperContainer"></div><div class="clipperControlBtnContainer"><button class="imageClipperBtn zoomIn">+</button><button class="imageClipperBtn zoomOut">-</button></div></div>'+
+        '<div class="dialogBoxFooter"><span class="btn confirm">confirm</span><span class="btn cancle">cancel</span></div>';
+        box.innerHTML=boxHtml;
+        mask.appendChild(box);
+        var body=document.querySelector("body");
+        body.appendChild(mask);
+        body.querySelector(".custormDialogBox").addEventListener("click",clickHandler);
+		function clickHandler(e){
+			var target=e.target;
+			if(e.target.classList.contains("confirm")){
+             	callback("confirm");
+				 e.currentTarget.removeEventListener("click",clickHandler);
+				 mask.parentNode.removeChild(mask);
+			 }
+			 else if(e.target.classList.contains("cancle")){
+				
+				 callback("cancle")
+				 e.currentTarget.removeEventListener("click",clickHandler);
+				 mask.parentNode.removeChild(mask);
+			 }
+			 else if(e.target.classList.contains("dialogBoxClose")){
+				 callback("close")
+				 e.currentTarget.removeEventListener("click",clickHandler);
+				 mask.parentNode.removeChild(mask);
+			}
+			 else if(e.target.classList.contains("zoomIn")){
+				JsImageClipper.zoomIn();
+			}
+			 else if(e.target.classList.contains("zoomOut")){
+				 JsImageClipper.zoomOut();
+			}
+		}
+	}
+</script>
+</html>
